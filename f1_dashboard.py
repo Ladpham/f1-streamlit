@@ -26,7 +26,7 @@ def get_race_data(year, round):
 
 st.title("F1 Race Analysis")
 
-year = st.sidebar.selectbox("Select Year", range(2015, 2024))
+year = st.sidebar.selectbox("Select Year", range(2020, 2024))
 round = st.sidebar.selectbox("Select Round", range(1, 22))
 
 df = get_race_data(year, round)
@@ -37,7 +37,7 @@ if df is not None:
     final_positions_chart = alt.Chart(df).mark_circle(size=60).encode(
         x="position",
         #y="full_name",
-        y=alt.Y("position", sort='x'),  # Updated line
+        y=alt.Y("full_name", sort="position"),  # Updated line
         
         tooltip=["laps", "Time"],
         color=alt.Color("points", scale=alt.Scale(scheme="viridis"))
@@ -47,7 +47,7 @@ if df is not None:
     driver_rankings_chart = alt.Chart(df).mark_bar().encode(
         x="full_name",
         #y="points",
-        y=alt.Y("points", sort='x'),  # Updated line
+        y=alt.Y("points", sort="full_name"),  # Updated line
         
         tooltip=["laps", "Time"],
         color=alt.Color("points", scale=alt.Scale(scheme="viridis"))
@@ -69,7 +69,7 @@ if df is not None:
         fastest_lap_chart = alt.Chart(df_qual).mark_bar().encode(
             x="full_name",
             #y="fastest_lap_rank",
-            y=alt.Y("fastest_lap_rank", sort='x'),  # Updated line
+            y=alt.Y("fastest_lap_rank", sort='full_name'),  # Updated line
             tooltip=["Q1"],
             color=alt.Color("fastest_lap_rank", scale=alt.Scale(scheme="viridis"))
         ).properties(title="Fastest Lap Analysis")

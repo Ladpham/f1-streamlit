@@ -25,7 +25,7 @@ def get_race_data(year, round):
 
 st.title("F1 Race Analysis")
 
-year = st.sidebar.selectbox("Select Year", range(2000, 2022))
+year = st.sidebar.selectbox("Select Year", range(2000, 2024))
 round = st.sidebar.selectbox("Select Round", range(1, 22))
 
 df = get_race_data(year, round)

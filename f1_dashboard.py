@@ -51,7 +51,7 @@ if df is not None:
     st.altair_chart(driver_rankings_chart, use_container_width=True)
 
     # Technical analysis of the fastest lap during the qualifying
-    response = requests.get(f{ERGAST_API}/{year}/{round}/qualifying.json")
+    response = requests.get(f"{ERGAST_API}/{year}/{round}/qualifying.json")
     data = response.json()["MRData"]["RaceTable"]["Races"]
     if data:
         qualifying = data[0]["QualifyingResults"]

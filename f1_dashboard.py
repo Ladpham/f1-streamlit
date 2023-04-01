@@ -36,7 +36,9 @@ if df is not None:
 
     final_positions_chart = alt.Chart(df).mark_circle(size=60).encode(
         x="position",
-        y="full_name",
+        #y="full_name",
+        y=alt.Y("position", sort='x'),  # Updated line
+        
         tooltip=["laps", "Time"],
         color=alt.Color("points", scale=alt.Scale(scheme="viridis"))
     ).properties(title="Final Positions")
@@ -44,7 +46,9 @@ if df is not None:
 
     driver_rankings_chart = alt.Chart(df).mark_bar().encode(
         x="full_name",
-        y="points",
+        #y="points",
+        y=alt.Y("points", sort='x'),  # Updated line
+        
         tooltip=["laps", "Time"],
         color=alt.Color("points", scale=alt.Scale(scheme="viridis"))
     ).properties(title="Driver Rankings")
@@ -64,7 +68,8 @@ if df is not None:
 
         fastest_lap_chart = alt.Chart(df_qual).mark_bar().encode(
             x="full_name",
-            y="fastest_lap_rank",
+            #y="fastest_lap_rank",
+            y=alt.Y("fastest_lap_rank", sort='x'),  # Updated line
             tooltip=["Q1"],
             color=alt.Color("fastest_lap_rank", scale=alt.Scale(scheme="viridis"))
         ).properties(title="Fastest Lap Analysis")

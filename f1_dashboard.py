@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import streamlit as st
-import plotly.express as px
+import altair as alt
 
 ERGAST_API = "https://ergast.com/api/f1"
 
@@ -19,13 +19,14 @@ def get_race_data(year, round):
         df["points"] = df["points"].astype(float)
         df["laps"] = df["laps"].astype(int)
         df["grid"] = df["grid"].astype(int)
+        df["full_name"] = df["Driver"].apply(lambda d: d["givenName"] + " " + d["familyName"])
         return df
     else:
         return None
 
 st.title("F1 Race Analysis")
 
-year = st.sidebar.selectbox("Select Year", range(2000, 2024))
+year = st.sidebar.selectbox("Select Year", range(2000, 2022))
 round = st.sidebar.selectbox("Select Round", range(1, 22))
 
 df = get_race_data(year, round)
@@ -33,14 +34,24 @@ df = get_race_data(year, round)
 if df is not None:
     st.header(f"{df['circuit_name'][0]} - {year}")
 
-    fig = px.scatter(df, x="position", y="Driver", hover_data=["laps", "Time"], title="Final Positions")
-    st.plotly_chart(fig)
+    final_positions_chart = alt.Chart(df).mark_circle(size=60).encode(
+        x="position",
+        y="full_name",
+        tooltip=["laps", "Time"],
+        color=alt.Color("points", scale=alt.Scale(scheme="viridis"))
+    ).properties(title="Final Positions")
+    st.altair_chart(final_positions_chart, use_container_width=True)
 
-    fig = px.bar(df, x="Driver", y="points", hover_data=["laps", "Time"], title="Driver Rankings")
-    st.plotly_chart(fig)
+    driver_rankings_chart = alt.Chart(df).mark_bar().encode(
+        x="full_name",
+        y="points",
+        tooltip=["laps", "Time"],
+        color=alt.Color("points", scale=alt.Scale(scheme="viridis"))
+    ).properties(title="Driver Rankings")
+    st.altair_chart(driver_rankings_chart, use_container_width=True)
 
     # Technical analysis of the fastest lap during the qualifying
-    response = requests.get(f"{ERGAST_API}/{year}/{round}/qualifying.json")
+    response = requests. Get(f{ERGAST_API}/{year}/{round}/qualifying.json")
     data = response.json()["MRData"]["RaceTable"]["Races"]
     if data:
         qualifying = data[0]["QualifyingResults"]
@@ -49,9 +60,15 @@ if df is not None:
         df_qual["year"] = year
         df_qual["round"] = round
         df_qual["circuit_name"] = data[0]["Circuit"]["circuitName"]
+        df_qual["full_name"] = df_qual["Driver"].apply(lambda d: d["givenName"] + " " + d["familyName"])
 
-        fig = px.histogram(df_qual, x="Driver", y="fastest_lap_rank", hover_data=["Q1"], title="Fastest Lap Analysis")
-        st.plotly_chart(fig)
+        fastest_lap_chart = alt.Chart(df_qual).mark_bar().encode(
+            x="full_name",
+            y="fastest_lap_rank",
+            tooltip=["Q1"],
+            color=alt.Color("fastest_lap_rank", scale=alt.Scale(scheme="viridis"))
+        ).properties(title="Fastest Lap Analysis")
+        st.altair_chart(fastest_lap_chart, use_container_width=True)
     else:
         st.write("No qualifying data available")
 
